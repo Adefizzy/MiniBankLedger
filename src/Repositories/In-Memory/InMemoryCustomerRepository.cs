@@ -16,7 +16,7 @@ public class InMemoryCustomerRepository : ICustomerRepository
         return customer;
     }
 
-    public static List<Customer> FindAll()
+    public  List<Customer> FindAll()
     {
         return Customers;
     }
