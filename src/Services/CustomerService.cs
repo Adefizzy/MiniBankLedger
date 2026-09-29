@@ -1,6 +1,7 @@
 using System;
 using MiniBankLedger.Domain;
 using MiniBankLedger.Domain.DTOs;
+using MiniBankLedger.Exceptions;
 using MiniBankLedger.Repositories.In_Memory;
 
 namespace MiniBankLedger.Services;
@@ -12,14 +13,32 @@ public class CustomerService
 
         try
         {
-            bool isExisting = InMemoryCustomerRepository.FindAll().Any(c => c.Email == customerDto.Email || c.PhoneNumber == customerDto.PhoneNumber);
+            bool isExisting = InMemoryCustomerRepository.FindAll()
+                    .Any(c => c.Email == customerDto.Email || c.PhoneNumber == customerDto.PhoneNumber);
+
 
             if (isExisting)
             {
                 throw new UniqueExceptions("Invalid: Email and Phone Number must be unique");
             }
 
-            Customer customer = InMemoryCustomerRepository.Save(customerDto);
+            List<Customer> customers = InMemoryCustomerRepository.FindAll();
+
+            int customerId = customers.Count + 1;
+
+            string dateCreated = DateTime.UtcNow.ToString();
+
+            Customer customer = new()
+            {
+                FirstName = customerDto.FirstName,
+                LastName = customerDto.LastName,
+                PhoneNumber = customerDto.PhoneNumber,
+                Email = customerDto.Email,
+                DateCreated = dateCreated,
+                CustomerId = customerId
+            };
+
+            Customer savedCustomer = InMemoryCustomerRepository.Save(customer);
 
             return customer;
         }

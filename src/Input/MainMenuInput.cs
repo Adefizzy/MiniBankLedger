@@ -1,3 +1,5 @@
+
+namespace MiniBankLedger.Input;
 static class MainMenuInput
 {
     public static string? MainMenu()

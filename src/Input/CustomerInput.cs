@@ -2,7 +2,7 @@ using MiniBankLedger.Domain.DTOs;
 using MiniBankLedger.Shared;
 using static System.Console;
 
-
+namespace MiniBankLedger.Input;
 static class CustomerInput
 {
     public static CustomerDto CreateCustomerInput()

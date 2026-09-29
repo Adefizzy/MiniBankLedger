@@ -1,6 +1,8 @@
 ﻿
 using MiniBankLedger.Controllers;
-using MiniBankLedger.Repositories.In_Memory;
+using MiniBankLedger.Domain;
+using MiniBankLedger.Input;
+using MiniBankLedger.Output;
 using MiniBankLedger.Services;
 
 Console.Clear();
@@ -19,7 +21,12 @@ do
 
             CustomerController customerController = new(new CustomerService());
 
-            customerController.CreateCustomer();
+            Customer? customer = customerController.CreateCustomer();
+            if (customer is not null)
+            {
+                CustomerOutput.PrintCustomer(customer);
+            }
+
         }
 
         if (menuNumber == 2)
