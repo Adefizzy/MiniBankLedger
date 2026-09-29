@@ -16,8 +16,18 @@ public class InMemoryCustomerRepository : ICustomerRepository
         return customer;
     }
 
-    public  List<Customer> FindAll()
+    public List<Customer> FindAll()
     {
         return Customers;
+    }
+
+    public Customer? FindById(int id)
+    {
+        return Customers.Find(c => c.CustomerId == id);
+    }
+
+    public Customer? FindByEmail(string email)
+    {
+        return Customers.Find(c => c.Email == email);
     }
 }

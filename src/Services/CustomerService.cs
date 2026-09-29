@@ -49,4 +49,45 @@ public class CustomerService(ICustomerRepository customerRepository)
             return null;
         }
     }
+
+
+
+    public Customer? SearchCustomer(string idOrEmail)
+    {
+        try
+        {
+            Customer? customer;
+            if (int.TryParse(idOrEmail, out int id))
+            {
+                customer = customerRepository.FindById(id);
+            }
+            else if (idOrEmail.Contains('@'))
+            {
+                customer = customerRepository.FindByEmail(email: idOrEmail);
+            }
+            else
+            {
+                throw new InvalidEntryException("Entry must be id or email");
+            }
+
+            if (customer is not null)
+            {
+                return customer;
+            }
+
+            throw new NotFoundException($"Customer with {idOrEmail} is not found");
+        }
+        catch (InvalidEntryException e)
+        {
+            Console.WriteLine($"********{e.Message}*********");
+            return null;
+        }
+        catch (NotFoundException e)
+        {
+            Console.WriteLine($"********{e.Message}*********");
+            return null;
+        }
+
+
+    }
 }

@@ -16,4 +16,11 @@ class CustomerController(CustomerService customerService)
         return customerService.CreateCustomer(customerDto);
 
     }
+
+    public Customer? SearchCustomer()
+    {
+        string idOrEmail = CustomerInput.SearchCustomer();
+
+        return customerService.SearchCustomer(idOrEmail);
+    }
 }

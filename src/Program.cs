@@ -17,27 +17,23 @@ do
 
     if (int.TryParse(mainmenu, out int menuNumber))
     {
-        if (menuNumber == 1)
+        CustomerController customerController = new(new CustomerService(new InMemoryCustomerRepository()));
+
+        if (menuNumber == 1) // create customer
         {
-
-            CustomerController customerController = new(new CustomerService(new InMemoryCustomerRepository()));
-
             Customer? customer = customerController.CreateCustomer();
-            if (customer is not null)
-            {
-                CustomerOutput.PrintCustomer(customer);
-            }
-
+            CustomerOutput.PrintCustomer(customer);
         }
 
-        if (menuNumber == 2)
+        if (menuNumber == 2) // list customers
         {
 
         }
 
-        if (menuNumber == 3)
+        if (menuNumber == 3) // search customer
         {
-
+            Customer? customer = customerController.SearchCustomer();
+            CustomerOutput.PrintCustomer(customer);
         }
 
         if (menuNumber == 4)

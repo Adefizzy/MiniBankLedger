@@ -3,6 +3,7 @@ using MiniBankLedger.Shared;
 using static System.Console;
 
 namespace MiniBankLedger.Input;
+
 static class CustomerInput
 {
     public static CustomerDto CreateCustomerInput()
@@ -34,5 +35,16 @@ static class CustomerInput
         });
 
         return new CustomerDto(firstName, lastName, email, phoneNumber);
+    }
+
+    public static string SearchCustomer()
+    {
+        string idOrEmail = RequiredInputs.IsRequired(() =>
+         {
+             Write("Enter customer id or email: ");
+             return ReadLine();
+         });
+
+        return idOrEmail;
     }
 }

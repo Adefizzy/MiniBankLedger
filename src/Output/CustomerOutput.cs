@@ -8,7 +8,6 @@ public static class CustomerOutput
 
     public static void PrintCustomer(Customer? customer)
     {
-        WriteLine("Customer Created");
         WriteLine(customer?.ToString());
     }
 }
