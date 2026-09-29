@@ -27,7 +27,6 @@ public class CustomerService(ICustomerRepository customerRepository)
 
             int customerId = customers.Count + 1;
 
-            string dateCreated = DateTime.UtcNow.ToString();
 
             Customer customer = new()
             {
@@ -35,7 +34,6 @@ public class CustomerService(ICustomerRepository customerRepository)
                 LastName = customerDto.LastName,
                 PhoneNumber = customerDto.PhoneNumber,
                 Email = customerDto.Email,
-                DateCreated = dateCreated,
                 CustomerId = customerId
             };
 
