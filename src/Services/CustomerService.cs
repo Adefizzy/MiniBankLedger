@@ -9,7 +9,7 @@ namespace MiniBankLedger.Services;
 
 public class CustomerService(ICustomerRepository customerRepository)
 {
-    public Customer? CreateCustomer(CustomerDto customerDto)
+    public CustomersResponse? CreateCustomer(CustomerDto customerDto)
     {
 
         try
@@ -41,7 +41,13 @@ public class CustomerService(ICustomerRepository customerRepository)
 
             Customer savedCustomer = InMemoryCustomerRepository.Save(customer);
 
-            return customer;
+            return new CustomersResponse(
+                CustomerId: customer.CustomerId,
+                FirstName: customer.FirstName,
+                LastName: customer.LastName,
+                Email: customer.Email,
+                PhoneNumber: customer.PhoneNumber
+                );
         }
         catch (UniqueExceptions e)
         {
@@ -52,7 +58,7 @@ public class CustomerService(ICustomerRepository customerRepository)
 
 
 
-    public Customer? SearchCustomer(string idOrEmail)
+    public CustomersResponse? SearchCustomer(string idOrEmail)
     {
         try
         {
@@ -72,7 +78,13 @@ public class CustomerService(ICustomerRepository customerRepository)
 
             if (customer is not null)
             {
-                return customer;
+                return new CustomersResponse(
+                    CustomerId: customer.CustomerId,
+                    FirstName: customer.FirstName,
+                    LastName: customer.LastName,
+                    Email: customer.Email,
+                    PhoneNumber: customer.PhoneNumber
+                    );
             }
 
             throw new NotFoundException($"Customer with {idOrEmail} is not found");
@@ -89,5 +101,14 @@ public class CustomerService(ICustomerRepository customerRepository)
         }
 
 
+    }
+
+
+    public CustomersResponse[] AllCustomers()
+    {
+        List<Customer> customers = customerRepository.FindAll();
+
+        return [.. customers.Select(c => new CustomersResponse(
+            CustomerId: c.CustomerId, FirstName: c.FirstName, LastName: c.LastName, Email: c.Email, PhoneNumber: c.PhoneNumber))];
     }
 }

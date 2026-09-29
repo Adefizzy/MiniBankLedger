@@ -8,7 +8,7 @@ namespace MiniBankLedger.Controllers;
 
 class CustomerController(CustomerService customerService)
 {
-    public Customer? CreateCustomer()
+    public CustomersResponse? CreateCustomer()
     {
 
         CustomerDto customerDto = CustomerInput.CreateCustomerInput();
@@ -17,10 +17,15 @@ class CustomerController(CustomerService customerService)
 
     }
 
-    public Customer? SearchCustomer()
+    public CustomersResponse? SearchCustomer()
     {
         string idOrEmail = CustomerInput.SearchCustomer();
 
         return customerService.SearchCustomer(idOrEmail);
+    }
+
+    public CustomersResponse[] AllCustomers()
+    {
+        return customerService.AllCustomers();
     }
 }
