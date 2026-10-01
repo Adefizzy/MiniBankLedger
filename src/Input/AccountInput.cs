@@ -17,13 +17,13 @@ public class AccountInput
           });
 
 
-          string customerId = RequiredInputs.IsRequired(() =>
-          {
-              Write("Customer id: ");
-              return ReadLine();
-          });
+        string customerId = RequiredInputs.IsRequired(() =>
+        {
+            Write("Customer id: ");
+            return ReadLine();
+        });
 
-          return new CreateAccountRequest(AccountType: accountType, CustomerId: customerId);
+        return new CreateAccountRequest(AccountType: accountType, CustomerId: customerId);
     }
 
 
@@ -36,8 +36,45 @@ public class AccountInput
           });
 
 
-          return customerId;
+        return customerId;
     }
 
+
+    public static DepositRequest GetDepositParam()
+    {
+        string accountNumber = RequiredInputs.IsRequired(() =>
+         {
+             Write("Enter account number: ");
+             return ReadLine();
+         });
+
+
+        string amount = RequiredInputs.IsRequired(() =>
+        {
+            Write("Enter amount: ");
+            return ReadLine();
+        });
+
+        return new DepositRequest(AccountNumber: accountNumber, Amount: amount);
+    }
+
+
+    public static WithdrawalRequest GetWithdrawParam()
+    {
+        string accountNumber = RequiredInputs.IsRequired(() =>
+         {
+             Write("Enter account number: ");
+             return ReadLine();
+         });
+
+
+        string amount = RequiredInputs.IsRequired(() =>
+        {
+            Write("Enter amount: ");
+            return ReadLine();
+        });
+
+        return new WithdrawalRequest(AccountNumber: accountNumber, Amount: amount);
+    }
 
 }

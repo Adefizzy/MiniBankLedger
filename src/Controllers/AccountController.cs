@@ -20,4 +20,18 @@ public class AccountController(AccountService accountService)
 
         return accountService.GetCustomerAccounts(customerId);
     }
+
+    public AccountResponse Deposit()
+    {
+        DepositRequest depositRequest = AccountInput.GetDepositParam();
+
+        return accountService.Deposit(depositRequest);
+    }
+
+    public AccountResponse Withdraw()
+    {
+        WithdrawalRequest withdrawalRequest = AccountInput.GetWithdrawParam();
+
+        return accountService.Withdraw(withdrawalRequest);
+    }
 }

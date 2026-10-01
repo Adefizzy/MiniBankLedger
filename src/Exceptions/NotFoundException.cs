@@ -1,5 +1,3 @@
 namespace MiniBankLedger.Exceptions;
 
-class NotFoundException(string message) : Exception(message)
-{
-}
+class NotFoundException(string message) : Exception(message);

@@ -20,6 +20,7 @@ do
     {
         InMemoryCustomerRepository inMemoryCustomerRepository = new();
         InMemoryAccountRepository inMemoryAccountRepository = new();
+        InMemoryTransactionRepository inMemoryTransactionRepository = new();
 
         if (menuNumber == 1) // create customer
         {
@@ -48,19 +49,71 @@ do
 
         if (menuNumber == 4) // open account
         {
-            AccountController accountController = new(new AccountService(inMemoryAccountRepository, inMemoryCustomerRepository));
+            AccountController accountController = new(
+                new AccountService(
+                    inMemoryAccountRepository,
+                    inMemoryCustomerRepository,
+                    inMemoryTransactionRepository
+                    ));
             AccountResponse accountResponse = accountController.CreateAccount();
             Output.Printer(accountResponse);
         }
 
         if (menuNumber == 5) // view customer account
         {
-            AccountController accountController = new(new AccountService(inMemoryAccountRepository, inMemoryCustomerRepository));
+            AccountController accountController = new(
+                new AccountService(
+                    inMemoryAccountRepository,
+                    inMemoryCustomerRepository,
+                    inMemoryTransactionRepository
+                    ));
             List<AccountResponse> accountResponses = accountController.GetCustomerAccounts();
 
             foreach (AccountResponse acc in accountResponses)
             {
                 Output.Printer(acc);
+            }
+        }
+
+        if (menuNumber == 6) // Deposit
+        {
+            try
+            {
+                AccountController accountController = new(
+               new AccountService(
+                   inMemoryAccountRepository,
+                   inMemoryCustomerRepository,
+                   inMemoryTransactionRepository
+                   ));
+
+                AccountResponse accountResponse = accountController.Deposit();
+
+                Output.Printer(accountResponse);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        if (menuNumber == 7)
+        {
+            try
+            {
+                AccountController accountController = new(
+                              new AccountService(
+                                  inMemoryAccountRepository,
+                                  inMemoryCustomerRepository,
+                                  inMemoryTransactionRepository
+                                  ));
+
+                AccountResponse accountResponse = accountController.Withdraw();
+
+                Output.Printer(accountResponse);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
 

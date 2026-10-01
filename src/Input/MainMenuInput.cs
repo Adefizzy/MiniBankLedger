@@ -1,5 +1,6 @@
 
 namespace MiniBankLedger.Input;
+
 static class MainMenuInput
 {
     public static string? MainMenu()
@@ -10,11 +11,12 @@ static class MainMenuInput
         Console.WriteLine("3. Search Customer");
         Console.WriteLine("4. Open Account");
         Console.WriteLine("5. View Customer Account");
+        Console.WriteLine("6. Deposit");
+        Console.WriteLine("7. Withdraw");
+        Console.WriteLine("8. View Account Balance");
+        Console.WriteLine("9. View Account Transactions");
         Console.WriteLine("0. Exit");
-        Console.WriteLine();
-        Console.WriteLine();
         Console.Write("Select option: ");
-
         return Console.ReadLine();
     }
 }

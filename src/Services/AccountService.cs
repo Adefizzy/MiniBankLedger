@@ -8,7 +8,11 @@ using MiniBankLedger.Shared;
 
 namespace MiniBankLedger.Services;
 
-public class AccountService(IAccountRepository accountRepository, ICustomerRepository customerRepository)
+public class AccountService(
+    IAccountRepository accountRepository,
+    ICustomerRepository customerRepository,
+    ITransactionRepository transactionRepository
+    )
 {
     public AccountResponse CreateAccount(CreateAccountRequest accountRequest)
     {
@@ -39,7 +43,7 @@ public class AccountService(IAccountRepository accountRepository, ICustomerRepos
 
 
         return new AccountResponse(
-            AccountNumber: newAccount.AccountNumber,
+            AccountNumber: newAccount.AccountNumber.ToString(),
             AccountType: newAccount.AccountType,
             Balance: newAccount.Balance,
             Status: newAccount.Status,
@@ -60,7 +64,7 @@ public class AccountService(IAccountRepository accountRepository, ICustomerRepos
         List<Account> accounts = accountRepository.FindAccountByCustomerId(customerId);
 
         return [.. accounts.Select(acc => new AccountResponse(
-            AccountNumber: acc.AccountNumber,
+            AccountNumber: acc.AccountNumber.ToString(),
             AccountType: acc.AccountType,
             Balance: acc.Balance,
             Status: acc.Status,
@@ -69,6 +73,92 @@ public class AccountService(IAccountRepository accountRepository, ICustomerRepos
     }
 
 
+    public AccountResponse Deposit(DepositRequest depositRequest)
+    {
+        if (!ulong.TryParse(depositRequest.AccountNumber, out ulong accountNumber) || accountNumber.ToString().Length < 10)
+        {
+            throw new InvalidEntryException($"Account number{accountNumber} must be a valid ten digit number");
+        }
+
+        Account? account = accountRepository.GetAccountByAccountNumber(accountNumber);
+
+        if (!decimal.TryParse(depositRequest.Amount, out decimal amount) || amount <= 0)
+        {
+            throw new InvalidEntryException("Amount must be greater than zero");
+        }
+
+        if (account is null)
+        {
+            throw new InvalidEntryException($"Account with the account number {accountNumber} does not exist");
+        }
+
+        account.Balance += amount;
+        accountRepository.FindOneAndUpdate(accountNumber, account);
+
+        Transaction transaction = new()
+        {
+            AccountNumber = accountNumber,
+            TransactionId = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            Amount = amount,
+            BalanceAfter = account.Balance
+        };
+        transactionRepository.Save(transaction);
+
+
+        return new AccountResponse(
+            AccountNumber: account.AccountNumber.ToString(),
+            AccountType: account.AccountType,
+            Balance: account.Balance,
+            Status: account.Status,
+            CustomerId: account.CustomerId);
+    }
+
+
+    public AccountResponse Withdraw(WithdrawalRequest withdrawalRequest)
+    {
+        if (!ulong.TryParse(withdrawalRequest.AccountNumber, out ulong accountNumber) || accountNumber.ToString().Length < 10)
+        {
+            throw new InvalidEntryException($"Account number{accountNumber} must be a valid ten digit number");
+        }
+
+        Account? account = accountRepository.GetAccountByAccountNumber(accountNumber);
+
+        if (!decimal.TryParse(withdrawalRequest.Amount, out decimal amount) || amount <= 0)
+        {
+            throw new InvalidEntryException("Amount must be greater than zero");
+        }
+
+
+
+        if (account is null)
+        {
+            throw new InvalidEntryException($"Account with the account number {accountNumber} does not exist");
+        }
+
+        if (amount > account.Balance)
+        {
+            throw new InsufficientFundsException($"You don't have enough balance in your account");
+        }
+
+        account.Balance -= amount;
+        accountRepository.FindOneAndUpdate(accountNumber, account);
+
+        Transaction transaction = new()
+        {
+            AccountNumber = accountNumber,
+            TransactionId = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            Amount = amount,
+            BalanceAfter = account.Balance
+        };
+        transactionRepository.Save(transaction);
+
+        return new AccountResponse(
+            AccountNumber: account.AccountNumber.ToString(),
+            AccountType: account.AccountType,
+            Balance: account.Balance,
+            Status: account.Status,
+            CustomerId: account.CustomerId);
+    }
 
 
 }
