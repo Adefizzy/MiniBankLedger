@@ -37,7 +37,7 @@ public class CustomerService(ICustomerRepository customerRepository)
                 CustomerId = customerId
             };
 
-            Customer savedCustomer = InMemoryCustomerRepository.Save(customer);
+            Customer savedCustomer = customerRepository.Save(customer);
 
             return new CustomersResponse(
                 CustomerId: customer.CustomerId,

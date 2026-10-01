@@ -18,17 +18,19 @@ do
 
     if (int.TryParse(mainmenu, out int menuNumber))
     {
-        CustomerController customerController = new(new CustomerService(new InMemoryCustomerRepository()));
-        AccountController accountController = new(new AccountService(new InMemoryAccountRepository(), new InMemoryCustomerRepository()));
+        InMemoryCustomerRepository inMemoryCustomerRepository = new();
+        InMemoryAccountRepository inMemoryAccountRepository = new();
 
         if (menuNumber == 1) // create customer
         {
+            CustomerController customerController = new(new CustomerService(inMemoryCustomerRepository));
             CustomersResponse? customer = customerController.CreateCustomer();
             Output.Printer(customer);
         }
 
         if (menuNumber == 2) // list customers
         {
+            CustomerController customerController = new(new CustomerService(inMemoryCustomerRepository));
             CustomersResponse[] allCustomers = customerController.AllCustomers();
 
             foreach (CustomersResponse cus in allCustomers)
@@ -39,18 +41,21 @@ do
 
         if (menuNumber == 3) // search customer
         {
+            CustomerController customerController = new(new CustomerService(inMemoryCustomerRepository));
             CustomersResponse? customer = customerController.SearchCustomer();
             Output.Printer(customer);
         }
 
         if (menuNumber == 4) // open account
         {
+            AccountController accountController = new(new AccountService(inMemoryAccountRepository, inMemoryCustomerRepository));
             AccountResponse accountResponse = accountController.CreateAccount();
             Output.Printer(accountResponse);
         }
 
         if (menuNumber == 5) // view customer account
         {
+            AccountController accountController = new(new AccountService(inMemoryAccountRepository, inMemoryCustomerRepository));
             List<AccountResponse> accountResponses = accountController.GetCustomerAccounts();
 
             foreach (AccountResponse acc in accountResponses)
