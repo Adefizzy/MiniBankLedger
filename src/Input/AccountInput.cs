@@ -77,4 +77,13 @@ public class AccountInput
         return new WithdrawalRequest(AccountNumber: accountNumber, Amount: amount);
     }
 
+    public static string ViewAccountBalance()
+    {
+         return RequiredInputs.IsRequired(() =>
+         {
+             Write("Enter account number: ");
+             return ReadLine();
+         });
+    }
+
 }

@@ -96,7 +96,7 @@ do
             }
         }
 
-        if (menuNumber == 7)
+        if (menuNumber == 7) // Withdrawal
         {
             try
             {
@@ -117,6 +117,47 @@ do
             }
         }
 
+        if (menuNumber == 8)
+        {
+            try
+            {
+                AccountController accountController = new(
+                            new AccountService(
+                                inMemoryAccountRepository,
+                                inMemoryCustomerRepository,
+                                inMemoryTransactionRepository
+                                ));
+
+                string accountBalance = accountController.ViewAccountBalance();
+
+                Console.WriteLine(accountBalance);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        if (menuNumber == 9)
+        {
+            try
+            {
+                AccountController accountController = new(
+                      new AccountService(
+                          inMemoryAccountRepository,
+                          inMemoryCustomerRepository,
+                          inMemoryTransactionRepository
+                          ));
+
+                List<TransactionResponse> transactionResponses = accountController.ViewTransactions();
+
+                Output.Printer(transactionResponses);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
         if (menuNumber == 0) // Exit
         {
             shouldExit = true;

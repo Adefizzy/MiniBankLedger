@@ -100,7 +100,8 @@ public class AccountService(
             AccountNumber = accountNumber,
             TransactionId = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
             Amount = amount,
-            BalanceAfter = account.Balance
+            BalanceAfter = account.Balance,
+            TransactionType = TransactionType.Deposit
         };
         transactionRepository.Save(transaction);
 
@@ -148,7 +149,8 @@ public class AccountService(
             AccountNumber = accountNumber,
             TransactionId = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
             Amount = amount,
-            BalanceAfter = account.Balance
+            BalanceAfter = account.Balance,
+            TransactionType = TransactionType.Withdrawal
         };
         transactionRepository.Save(transaction);
 
@@ -158,6 +160,46 @@ public class AccountService(
             Balance: account.Balance,
             Status: account.Status,
             CustomerId: account.CustomerId);
+    }
+
+
+    public string ViewBalance(string AccountNumber)
+    {
+        if (!ulong.TryParse(AccountNumber, out ulong accountNumber) || accountNumber.ToString().Length < 10)
+        {
+            throw new InvalidEntryException($"Account number{accountNumber} must be a valid ten digit number");
+        }
+
+        Account? account = accountRepository.GetAccountByAccountNumber(accountNumber);
+
+        if (account is null)
+        {
+            throw new InvalidEntryException($"Account with the account number {accountNumber} does not exist");
+        }
+
+        return $"Current Account Balance is {account.Balance:C}";
+    }
+
+    public List<TransactionResponse> ViewTransactions(string AccountNumber)
+    {
+        if (!ulong.TryParse(AccountNumber, out ulong accountNumber) || accountNumber.ToString().Length < 10)
+        {
+            throw new InvalidEntryException($"Account number{accountNumber} must be a valid ten digit number");
+        }
+
+        if (accountRepository.GetAccountByAccountNumber(accountNumber) is null)
+        {
+            throw new InvalidEntryException($"Account with the account number {accountNumber} does not exist");
+        }
+
+        return [.. transactionRepository.FindByAccountNumber(accountNumber)
+                    .Select(tranc => new TransactionResponse(
+                            TransactionId: tranc.TransactionId,
+                            TransactionType: tranc.TransactionType,
+                            Amount: tranc.Amount,
+                            Balance: tranc.BalanceAfter
+                            ))];
+
     }
 
 

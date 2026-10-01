@@ -34,4 +34,19 @@ public class AccountController(AccountService accountService)
 
         return accountService.Withdraw(withdrawalRequest);
     }
+
+    public string ViewAccountBalance()
+    {
+        string accountNumber = AccountInput.ViewAccountBalance();
+
+
+        return accountService.ViewBalance(accountNumber);
+    }
+
+    public List<TransactionResponse> ViewTransactions()
+    {
+        string accountNumber = AccountInput.ViewAccountBalance();
+
+        return accountService.ViewTransactions(accountNumber);
+    }
 }

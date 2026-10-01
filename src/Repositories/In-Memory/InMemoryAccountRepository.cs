@@ -38,7 +38,7 @@ public class InMemoryAccountRepository : IAccountRepository
 
         List<Account> updatedAccounts = [];
 
-        foreach(Account acct in updatedAccounts)
+        foreach(Account acct in updatedTransactionsQuery)
         {
             updatedAccounts.Add(acct);
         }
