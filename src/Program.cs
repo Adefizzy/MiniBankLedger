@@ -10,6 +10,16 @@ using MiniBankLedger.Services;
 Console.Clear();
 bool shouldExit = false;
 
+InMemoryCustomerRepository inMemoryCustomerRepository = new();
+InMemoryAccountRepository inMemoryAccountRepository = new();
+InMemoryTransactionRepository inMemoryTransactionRepository = new();
+CustomerController customerController = new(new CustomerService(inMemoryCustomerRepository));
+AccountController accountController = new(
+               new AccountService(
+                   inMemoryAccountRepository,
+                   inMemoryCustomerRepository,
+                   inMemoryTransactionRepository
+                   ));
 
 do
 {
@@ -18,20 +28,16 @@ do
 
     if (int.TryParse(mainmenu, out int menuNumber))
     {
-        InMemoryCustomerRepository inMemoryCustomerRepository = new();
-        InMemoryAccountRepository inMemoryAccountRepository = new();
-        InMemoryTransactionRepository inMemoryTransactionRepository = new();
+
 
         if (menuNumber == 1) // create customer
         {
-            CustomerController customerController = new(new CustomerService(inMemoryCustomerRepository));
             CustomersResponse? customer = customerController.CreateCustomer();
             Output.Printer(customer);
         }
 
         if (menuNumber == 2) // list customers
         {
-            CustomerController customerController = new(new CustomerService(inMemoryCustomerRepository));
             CustomersResponse[] allCustomers = customerController.AllCustomers();
 
             foreach (CustomersResponse cus in allCustomers)
@@ -42,31 +48,19 @@ do
 
         if (menuNumber == 3) // search customer
         {
-            CustomerController customerController = new(new CustomerService(inMemoryCustomerRepository));
             CustomersResponse? customer = customerController.SearchCustomer();
             Output.Printer(customer);
         }
 
         if (menuNumber == 4) // open account
         {
-            AccountController accountController = new(
-                new AccountService(
-                    inMemoryAccountRepository,
-                    inMemoryCustomerRepository,
-                    inMemoryTransactionRepository
-                    ));
+
             AccountResponse accountResponse = accountController.CreateAccount();
             Output.Printer(accountResponse);
         }
 
         if (menuNumber == 5) // view customer account
         {
-            AccountController accountController = new(
-                new AccountService(
-                    inMemoryAccountRepository,
-                    inMemoryCustomerRepository,
-                    inMemoryTransactionRepository
-                    ));
             List<AccountResponse> accountResponses = accountController.GetCustomerAccounts();
 
             foreach (AccountResponse acc in accountResponses)
@@ -79,15 +73,7 @@ do
         {
             try
             {
-                AccountController accountController = new(
-               new AccountService(
-                   inMemoryAccountRepository,
-                   inMemoryCustomerRepository,
-                   inMemoryTransactionRepository
-                   ));
-
                 AccountResponse accountResponse = accountController.Deposit();
-
                 Output.Printer(accountResponse);
             }
             catch (Exception e)
@@ -99,17 +85,9 @@ do
         if (menuNumber == 7) // Withdrawal
         {
             try
-            {
-                AccountController accountController = new(
-                              new AccountService(
-                                  inMemoryAccountRepository,
-                                  inMemoryCustomerRepository,
-                                  inMemoryTransactionRepository
-                                  ));
-
-                AccountResponse accountResponse = accountController.Withdraw();
-
-                Output.Printer(accountResponse);
+            {  
+            AccountResponse accountResponse = accountController.Withdraw();
+            Output.Printer(accountResponse);
             }
             catch (Exception e)
             {
@@ -121,15 +99,7 @@ do
         {
             try
             {
-                AccountController accountController = new(
-                            new AccountService(
-                                inMemoryAccountRepository,
-                                inMemoryCustomerRepository,
-                                inMemoryTransactionRepository
-                                ));
-
                 string accountBalance = accountController.ViewAccountBalance();
-
                 Console.WriteLine(accountBalance);
             }
             catch (Exception e)
@@ -142,15 +112,7 @@ do
         {
             try
             {
-                AccountController accountController = new(
-                      new AccountService(
-                          inMemoryAccountRepository,
-                          inMemoryCustomerRepository,
-                          inMemoryTransactionRepository
-                          ));
-
                 List<TransactionResponse> transactionResponses = accountController.ViewTransactions();
-
                 Output.Printer(transactionResponses);
             }
             catch (Exception e)
