@@ -10,5 +10,5 @@ public interface ITransactionRepository
 
     public Transaction FindOneAndUpdate(long transactionId, Transaction transaction);
 
-    public List<Transaction> FindByAccountNumber(ulong accountNumber);
+    public List<Transaction> FindByAccountNumber(string accountNumber);
 }

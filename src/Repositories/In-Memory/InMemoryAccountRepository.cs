@@ -24,16 +24,16 @@ public class InMemoryAccountRepository : IAccountRepository
         return Accounts;
     }
 
-    public Account? GetAccountByAccountNumber(ulong accountNumber)
+    public Account? GetAccountByAccountNumber(string accountNumber)
     {
      return Accounts.FirstOrDefault(acc => acc.AccountNumber == accountNumber);
     }
 
 
-     public Account FindOneAndUpdate(ulong accountNumber, Account account)
+     public Account FindOneAndUpdate(string accountNumber, Account account)
     {
         IEnumerable<Account> updatedTransactionsQuery = from acct in Accounts
-                                                        select acct.AccountNumber== accountNumber ? account : acct;
+                                                        select acct.AccountNumber == accountNumber ? account : acct;
 
 
         List<Account> updatedAccounts = [];

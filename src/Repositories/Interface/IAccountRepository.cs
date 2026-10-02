@@ -11,7 +11,7 @@ public interface IAccountRepository
 
     public List<Account> GetAllAccounts();
 
-    public Account? GetAccountByAccountNumber(ulong accointNumber);
+    public Account? GetAccountByAccountNumber(string accointNumber);
 
-    public Account FindOneAndUpdate(ulong AccountNumber, Account account);
+    public Account FindOneAndUpdate(string AccountNumber, Account account);
 }

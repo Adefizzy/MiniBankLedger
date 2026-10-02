@@ -1,3 +1,3 @@
 
 namespace MiniBankLedger.Exceptions;
-class UniqueExceptions(string message) : Exception(message);
+public class UniqueExceptions(string message) : Exception(message);

@@ -32,7 +32,7 @@ public class InMemoryTransactionRepository : ITransactionRepository
         return transaction;
     }
 
-    public List<Transaction> FindByAccountNumber(ulong accointNumber)
+    public List<Transaction> FindByAccountNumber(string accointNumber)
     {
         IEnumerable<Transaction> updatedTransactionsQuery = from tranc in Transactions
                                                             where tranc.AccountNumber == accointNumber

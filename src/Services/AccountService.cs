@@ -75,14 +75,15 @@ public class AccountService(
 
     public AccountResponse Deposit(DepositRequest depositRequest)
     {
-        if (!ulong.TryParse(depositRequest.AccountNumber, out ulong accountNumber) || accountNumber.ToString().Length < 10)
+        var (accountNumber, Amount) = depositRequest;
+        if (accountNumber.Length < 10)
         {
             throw new InvalidEntryException($"Account number{accountNumber} must be a valid ten digit number");
         }
 
         Account? account = accountRepository.GetAccountByAccountNumber(accountNumber);
 
-        if (!decimal.TryParse(depositRequest.Amount, out decimal amount) || amount <= 0)
+        if (!decimal.TryParse(Amount, out decimal amount) || amount <= 0)
         {
             throw new InvalidEntryException("Amount must be greater than zero");
         }
@@ -117,14 +118,17 @@ public class AccountService(
 
     public AccountResponse Withdraw(WithdrawalRequest withdrawalRequest)
     {
-        if (!ulong.TryParse(withdrawalRequest.AccountNumber, out ulong accountNumber) || accountNumber.ToString().Length < 10)
+        var (accountNumber, Amount) = withdrawalRequest;
+
+
+        if (accountNumber.ToString().Length < 10)
         {
             throw new InvalidEntryException($"Account number{accountNumber} must be a valid ten digit number");
         }
 
         Account? account = accountRepository.GetAccountByAccountNumber(accountNumber);
 
-        if (!decimal.TryParse(withdrawalRequest.Amount, out decimal amount) || amount <= 0)
+        if (!decimal.TryParse(Amount, out decimal amount) || amount <= 0)
         {
             throw new InvalidEntryException("Amount must be greater than zero");
         }
@@ -163,9 +167,9 @@ public class AccountService(
     }
 
 
-    public string ViewBalance(string AccountNumber)
+    public string ViewBalance(string accountNumber)
     {
-        if (!ulong.TryParse(AccountNumber, out ulong accountNumber) || accountNumber.ToString().Length < 10)
+        if (accountNumber.Length < 10)
         {
             throw new InvalidEntryException($"Account number{accountNumber} must be a valid ten digit number");
         }
@@ -180,9 +184,9 @@ public class AccountService(
         return $"Current Account Balance is {account.Balance:C}";
     }
 
-    public List<TransactionResponse> ViewTransactions(string AccountNumber)
+    public List<TransactionResponse> ViewTransactions(string accountNumber)
     {
-        if (!ulong.TryParse(AccountNumber, out ulong accountNumber) || accountNumber.ToString().Length < 10)
+        if (accountNumber.Length < 10)
         {
             throw new InvalidEntryException($"Account number{accountNumber} must be a valid ten digit number");
         }

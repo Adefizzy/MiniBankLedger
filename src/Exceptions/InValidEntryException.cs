@@ -1,3 +1,3 @@
 namespace MiniBankLedger.Exceptions;
 
-class InvalidEntryException(string message) : Exception(message);
+public class InvalidEntryException(string message) : Exception(message);
