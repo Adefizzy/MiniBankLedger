@@ -9,7 +9,7 @@ public class InMemoryCustomerRepository : ICustomerRepository
     private readonly static List<Customer> Customers = [];
 
 
-    public static Customer Save(Customer customer)
+    public Customer Save(Customer customer)
     {
         Customers.Add(customer);
 

@@ -10,4 +10,8 @@ public interface IAccountRepository
     public List<Account> FindAccountByCustomerId(int customerId);
 
     public List<Account> GetAllAccounts();
+
+    public Account? GetAccountByAccountNumber(ulong accointNumber);
+
+    public Account FindOneAndUpdate(ulong AccountNumber, Account account);
 }
