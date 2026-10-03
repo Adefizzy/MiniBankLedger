@@ -28,8 +28,6 @@ do
 
     if (int.TryParse(mainmenu, out int menuNumber))
     {
-
-
         if (menuNumber == 1) // create customer
         {
             CustomersResponse? customer = customerController.CreateCustomer();
@@ -85,9 +83,9 @@ do
         if (menuNumber == 7) // Withdrawal
         {
             try
-            {  
-            AccountResponse accountResponse = accountController.Withdraw();
-            Output.Printer(accountResponse);
+            {
+                AccountResponse accountResponse = accountController.Withdraw();
+                Output.Printer(accountResponse);
             }
             catch (Exception e)
             {
@@ -99,8 +97,8 @@ do
         {
             try
             {
-                string accountBalance = accountController.ViewAccountBalance();
-                Console.WriteLine(accountBalance);
+                decimal accountBalance = accountController.ViewAccountBalance();
+                Console.WriteLine($"Current Account Balance is {accountBalance:C}");
             }
             catch (Exception e)
             {

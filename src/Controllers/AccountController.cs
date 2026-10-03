@@ -35,7 +35,7 @@ public class AccountController(AccountService accountService)
         return accountService.Withdraw(withdrawalRequest);
     }
 
-    public string ViewAccountBalance()
+    public decimal ViewAccountBalance()
     {
         string accountNumber = AccountInput.ViewAccountBalance();
 

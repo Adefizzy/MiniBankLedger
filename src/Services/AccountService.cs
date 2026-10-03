@@ -76,7 +76,8 @@ public class AccountService(
     public AccountResponse Deposit(DepositRequest depositRequest)
     {
         var (accountNumber, Amount) = depositRequest;
-        if (accountNumber.Length < 10)
+
+        if (accountNumber.Length is < 10 or >= 11)
         {
             throw new InvalidEntryException($"Account number{accountNumber} must be a valid ten digit number");
         }
@@ -90,7 +91,7 @@ public class AccountService(
 
         if (account is null)
         {
-            throw new InvalidEntryException($"Account with the account number {accountNumber} does not exist");
+            throw new NotFoundException($"Account with the account number {accountNumber} does not exist");
         }
 
         account.Balance += amount;
@@ -121,7 +122,7 @@ public class AccountService(
         var (accountNumber, Amount) = withdrawalRequest;
 
 
-        if (accountNumber.ToString().Length < 10)
+        if (accountNumber.Length is < 10 or >= 11)
         {
             throw new InvalidEntryException($"Account number{accountNumber} must be a valid ten digit number");
         }
@@ -137,7 +138,7 @@ public class AccountService(
 
         if (account is null)
         {
-            throw new InvalidEntryException($"Account with the account number {accountNumber} does not exist");
+            throw new NotFoundException($"Account with the account number {accountNumber} does not exist");
         }
 
         if (amount > account.Balance)
@@ -167,9 +168,9 @@ public class AccountService(
     }
 
 
-    public string ViewBalance(string accountNumber)
+    public decimal ViewBalance(string accountNumber)
     {
-        if (accountNumber.Length < 10)
+        if (accountNumber.Length  is < 10 or >= 11)
         {
             throw new InvalidEntryException($"Account number{accountNumber} must be a valid ten digit number");
         }
@@ -181,12 +182,12 @@ public class AccountService(
             throw new InvalidEntryException($"Account with the account number {accountNumber} does not exist");
         }
 
-        return $"Current Account Balance is {account.Balance:C}";
+        return account.Balance;
     }
 
     public List<TransactionResponse> ViewTransactions(string accountNumber)
     {
-        if (accountNumber.Length < 10)
+        if (accountNumber.Length  is < 10 or >= 11)
         {
             throw new InvalidEntryException($"Account number{accountNumber} must be a valid ten digit number");
         }

@@ -20,7 +20,7 @@ public class CustomerService(ICustomerRepository customerRepository)
 
             if (isExisting)
             {
-                throw new UniqueExceptions("Invalid: Email and Phone Number must be unique");
+                throw new UniqueException("Invalid: Email and Phone Number must be unique");
             }
 
             List<Customer> customers = customerRepository.FindAll();
@@ -47,7 +47,7 @@ public class CustomerService(ICustomerRepository customerRepository)
                 PhoneNumber: customer.PhoneNumber
                 );
         }
-        catch (UniqueExceptions e)
+        catch (UniqueException e)
         {
             Console.WriteLine($"********{e.Message}*********");
             return null;
