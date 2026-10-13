@@ -97,15 +97,7 @@ public class AccountService(
         account.Balance += amount;
         accountRepository.FindOneAndUpdate(accountNumber, account);
 
-        Transaction transaction = new()
-        {
-            AccountNumber = accountNumber,
-            TransactionId = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-            Amount = amount,
-            BalanceAfter = account.Balance,
-            TransactionType = TransactionType.Deposit
-        };
-        transactionRepository.Save(transaction);
+        CreateTransaction(account, amount);
 
 
         return new AccountResponse(
@@ -149,15 +141,7 @@ public class AccountService(
         account.Balance -= amount;
         accountRepository.FindOneAndUpdate(accountNumber, account);
 
-        Transaction transaction = new()
-        {
-            AccountNumber = accountNumber,
-            TransactionId = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
-            Amount = amount,
-            BalanceAfter = account.Balance,
-            TransactionType = TransactionType.Withdrawal
-        };
-        transactionRepository.Save(transaction);
+        CreateTransaction(account, amount);
 
         return new AccountResponse(
             AccountNumber: account.AccountNumber.ToString(),
@@ -170,7 +154,7 @@ public class AccountService(
 
     public decimal ViewBalance(string accountNumber)
     {
-        if (accountNumber.Length  is < 10 or >= 11)
+        if (accountNumber.Length is < 10 or >= 11)
         {
             throw new InvalidEntryException($"Account number{accountNumber} must be a valid ten digit number");
         }
@@ -187,7 +171,7 @@ public class AccountService(
 
     public List<TransactionResponse> ViewTransactions(string accountNumber)
     {
-        if (accountNumber.Length  is < 10 or >= 11)
+        if (accountNumber.Length is < 10 or >= 11)
         {
             throw new InvalidEntryException($"Account number{accountNumber} must be a valid ten digit number");
         }
@@ -208,4 +192,69 @@ public class AccountService(
     }
 
 
+    public TransferResponse Transfer(TransferRequest transferRequest)
+    {
+        var (source, destination, rawAmount) = transferRequest;
+
+        if (source.Length is < 10 or >= 11)
+        {
+            throw new InvalidEntryException($"Source account {source} must be a valid 10 digit number");
+        }
+
+        if (destination.Length is < 10 or >= 11)
+        {
+            throw new InvalidEntryException($"Destination account {destination} must be a valid 10 digit number");
+        }
+
+
+        Account? sourceAccount = accountRepository.GetAccountByAccountNumber(source);
+        Account? destinationAccount = accountRepository.GetAccountByAccountNumber(destination);
+
+        if (sourceAccount is null)
+        {
+            throw new NotFoundException($"source account with account number {source} does not exist");
+        }
+
+        if (destinationAccount is null)
+        {
+            throw new NotFoundException($"destination account with the account number {destination} does not exist");
+        }
+
+        if (!decimal.TryParse(rawAmount, out decimal amount) || amount <= 0)
+        {
+            throw new InvalidEntryException("Amount must be greater than zero");
+        }
+
+
+        if (amount > sourceAccount.Balance)
+        {
+            throw new InsufficientFundsException($"Source account does not have enough balance for this transaction");
+        }
+
+        sourceAccount.Balance -= amount;
+        destinationAccount.Balance += amount;
+
+        CreateTransaction(sourceAccount, amount);
+
+        CreateTransaction(destinationAccount, amount);
+
+        return new TransferResponse(Source: sourceAccount.AccountNumber, Destination: destinationAccount.AccountNumber, Amount: amount);
+    }
+
+
+    private Transaction CreateTransaction(Account account, decimal amount)
+    {
+        Transaction transaction = new()
+        {
+            AccountNumber = account.AccountNumber,
+            TransactionId = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            Amount = amount,
+            BalanceAfter = account.Balance,
+            TransactionType = TransactionType.Transfer_in
+        };
+
+        transactionRepository.Save(transaction);
+
+        return transaction;
+    }
 }

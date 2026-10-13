@@ -15,6 +15,7 @@ static class MainMenuInput
         Console.WriteLine("7. Withdraw");
         Console.WriteLine("8. View Account Balance");
         Console.WriteLine("9. View Account Transactions");
+        Console.WriteLine("10. Transfer fund");
         Console.WriteLine("0. Exit");
         Console.Write("Select option: ");
         return Console.ReadLine();

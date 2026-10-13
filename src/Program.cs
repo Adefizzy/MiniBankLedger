@@ -93,7 +93,7 @@ do
             }
         }
 
-        if (menuNumber == 8)
+        if (menuNumber == 8) // view account balance
         {
             try
             {
@@ -106,12 +106,29 @@ do
             }
         }
 
-        if (menuNumber == 9)
+        if (menuNumber == 9) // View account transaction
         {
             try
             {
                 List<TransactionResponse> transactionResponses = accountController.ViewTransactions();
                 Output.Printer(transactionResponses);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        if (menuNumber == 10)
+        {
+            try
+            {
+                TransferResponse transferResponse = accountController.Transfer();
+
+                Console.WriteLine("Transfer successful.");
+                Console.WriteLine($"From: {transferResponse.Source}");
+                Console.WriteLine($"To: {transferResponse.Destination}");
+                Console.WriteLine($"Amount: {transferResponse.Amount}:C");
             }
             catch (Exception e)
             {

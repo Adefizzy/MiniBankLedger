@@ -79,11 +79,35 @@ public class AccountInput
 
     public static string ViewAccountBalance()
     {
-         return RequiredInputs.IsRequired(() =>
-         {
-             Write("Enter account number: ");
-             return ReadLine();
-         });
+        return RequiredInputs.IsRequired(() =>
+        {
+            Write("Enter account number: ");
+            return ReadLine();
+        });
     }
 
+    public static TransferRequest MakeTransfer()
+    {
+        string sourceAccount = RequiredInputs.IsRequired(() =>
+        {
+            Write("Enter source account number: ");
+            return ReadLine();
+        });
+
+        string destinationAccount = RequiredInputs.IsRequired(() =>
+       {
+           Write("Enter destination account number: ");
+           return ReadLine();
+       });
+
+        string amount = RequiredInputs.IsRequired(() =>
+      {
+          Write("Enter amount: ");
+          return ReadLine();
+      });
+
+        return new TransferRequest(Source: sourceAccount, Destination: destinationAccount, Amount: amount);
+    }
+
+    
 }

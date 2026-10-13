@@ -49,4 +49,11 @@ public class AccountController(AccountService accountService)
 
         return accountService.ViewTransactions(accountNumber);
     }
+
+    public TransferResponse Transfer()
+    {
+        TransferRequest transferRequest = AccountInput.MakeTransfer();
+
+        return accountService.Transfer(transferRequest);
+    }
 }
