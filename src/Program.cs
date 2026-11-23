@@ -128,7 +128,7 @@ do
                 Console.WriteLine("Transfer successful.");
                 Console.WriteLine($"From: {transferResponse.Source}");
                 Console.WriteLine($"To: {transferResponse.Destination}");
-                Console.WriteLine($"Amount: {transferResponse.Amount}:C");
+                Console.WriteLine($"Amount: {transferResponse.Amount:C}");
             }
             catch (Exception e)
             {

@@ -97,7 +97,7 @@ public class AccountService(
         account.Balance += amount;
         accountRepository.FindOneAndUpdate(accountNumber, account);
 
-        CreateTransaction(account, amount);
+        CreateTransaction(account, amount, TransactionType.Deposit);
 
 
         return new AccountResponse(
@@ -141,7 +141,7 @@ public class AccountService(
         account.Balance -= amount;
         accountRepository.FindOneAndUpdate(accountNumber, account);
 
-        CreateTransaction(account, amount);
+        CreateTransaction(account, amount, TransactionType.Withdrawal);
 
         return new AccountResponse(
             AccountNumber: account.AccountNumber.ToString(),
@@ -159,13 +159,7 @@ public class AccountService(
             throw new InvalidEntryException($"Account number{accountNumber} must be a valid ten digit number");
         }
 
-        Account? account = accountRepository.GetAccountByAccountNumber(accountNumber);
-
-        if (account is null)
-        {
-            throw new InvalidEntryException($"Account with the account number {accountNumber} does not exist");
-        }
-
+        Account? account = accountRepository.GetAccountByAccountNumber(accountNumber) ?? throw new NotFoundException($"Account with the account number {accountNumber} does not exist");
         return account.Balance;
     }
 
@@ -178,7 +172,7 @@ public class AccountService(
 
         if (accountRepository.GetAccountByAccountNumber(accountNumber) is null)
         {
-            throw new InvalidEntryException($"Account with the account number {accountNumber} does not exist");
+            throw new NotFoundException($"Account with the account number {accountNumber} does not exist");
         }
 
         return [.. transactionRepository.FindByAccountNumber(accountNumber)
@@ -206,6 +200,15 @@ public class AccountService(
             throw new InvalidEntryException($"Destination account {destination} must be a valid 10 digit number");
         }
 
+        if (string.IsNullOrEmpty(source) || !source.All(char.IsAsciiDigit))
+        {
+            throw new InvalidEntryException($"Source account {source} must be a valid 10 digit number");
+        }
+
+        if (string.IsNullOrEmpty(destination) || destination.All(char.IsAsciiDigit))
+        {
+            throw new InvalidEntryException($"Source account {source} must be a valid 10 digit number");
+        }
 
         Account? sourceAccount = accountRepository.GetAccountByAccountNumber(source);
         Account? destinationAccount = accountRepository.GetAccountByAccountNumber(destination);
@@ -215,9 +218,16 @@ public class AccountService(
             throw new NotFoundException($"source account with account number {source} does not exist");
         }
 
+
+
         if (destinationAccount is null)
         {
             throw new NotFoundException($"destination account with the account number {destination} does not exist");
+        }
+
+        if (sourceAccount.AccountNumber == destinationAccount.AccountNumber)
+        {
+            throw new InvalidEntryException($"source account {sourceAccount.AccountNumber} must be different from the destination account{destinationAccount.AccountNumber}");
         }
 
         if (!decimal.TryParse(rawAmount, out decimal amount) || amount <= 0)
@@ -231,26 +241,29 @@ public class AccountService(
             throw new InsufficientFundsException($"Source account does not have enough balance for this transaction");
         }
 
+        // Database transaction start
         sourceAccount.Balance -= amount;
         destinationAccount.Balance += amount;
+        Account sourceAccountUpdated = accountRepository.FindOneAndUpdate(source, sourceAccount);
+        Account destinationAccountUpdated = accountRepository.FindOneAndUpdate(destination, destinationAccount);
 
-        CreateTransaction(sourceAccount, amount);
+        CreateTransaction(sourceAccount, amount, TransactionType.Transfer_out);
+        CreateTransaction(destinationAccount, amount, TransactionType.Transfer_in);
 
-        CreateTransaction(destinationAccount, amount);
+        // Database transaction ends. roll back would happen if an error is thrown.
 
         return new TransferResponse(Source: sourceAccount.AccountNumber, Destination: destinationAccount.AccountNumber, Amount: amount);
     }
 
 
-    private Transaction CreateTransaction(Account account, decimal amount)
+    private Transaction CreateTransaction(Account account, decimal amount, TransactionType transactionType)
     {
         Transaction transaction = new()
         {
             AccountNumber = account.AccountNumber,
-            TransactionId = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
             Amount = amount,
             BalanceAfter = account.Balance,
-            TransactionType = TransactionType.Transfer_in
+            TransactionType = transactionType
         };
 
         transactionRepository.Save(transaction);

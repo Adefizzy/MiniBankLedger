@@ -14,7 +14,7 @@ public class InMemoryTransactionRepository : ITransactionRepository
         return transaction;
     }
 
-    public Transaction FindOneAndUpdate(long transactionId, Transaction transaction)
+    public Transaction FindOneAndUpdate(string transactionId, Transaction transaction)
     {
         IEnumerable<Transaction> updatedTransactionsQuery = from tranc in Transactions
                                                             select tranc.TransactionId == transactionId ? transaction : tranc;

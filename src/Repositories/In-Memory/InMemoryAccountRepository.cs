@@ -6,7 +6,7 @@ namespace MiniBankLedger.Repositories.In_Memory;
 
 public class InMemoryAccountRepository : IAccountRepository
 {
-    private static List<Account> Accounts = [];
+    private List<Account> Accounts = [];
     public Account Save(Account account)
     {
         Accounts.Add(account);
